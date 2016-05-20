@@ -1,10 +1,11 @@
-# Event-based
-
 function test()
 clear
 
 global fs; % sampling frequency
 global c; % sound speed
+global num_rcv; % number of receivers
+global rcv_loc; 
+global timelag;
 c = 343; 
 
 [src,fs] = audioread('human.wav');
@@ -12,15 +13,22 @@ src = src(:,(1));
 
 % define room parameters
 roomDim = [5    5    3];
-src_loc = [4    1.5  0.1];
-rcv_loc = [2.45  0.1   0.1;
-           2.55  0.1   0.1;
-           2.5   0.15  0.1];
+src_loc = [2.7  2.5  0.1];
+% rcv_loc = [2.45  0.1   0.1;
+%            2.55  0.1   0.1;
+%            2.5   0.2  0.1];
+% rcv_loc = [2.5  4.9   0.1;
+%            0.1  0.1   0.1;
+%            4.9   0.1  0.1];
+rcv_loc = [4.9  4.9   0.1;
+            0.1  0.1   0.1;
+            4.9   0.1  0.1
+            0.1  4.9  0.1];
 num_rcv = size(rcv_loc,1); % number of receivers
 
 % Make an initial guess for the location of the source.
-guess = mean(rcv_loc, 1);
-       
+%guess = mean(rcv_loc, 1);
+guess = [2.5 2.5];       
 % distances between every pair of receivers
 rcv_diff = [];
 for i = 1:num_rcv
@@ -42,11 +50,12 @@ dst = ISM_AudioData('fastISM_RIRs.mat',src);
 timelag = [];
 for i = 1:num_rcv
     for j = i+1:num_rcv
-       timelag(end+1) = cal_timelag(dst(:,(i)), dst(:,(j)), fs, rcv_diff);
+       timelag(end+1) = cal_timelag(dst(:,(i)), dst(:,(j)), rcv_diff);
     end
 end
 
-
+est_loc = fminsearch(@ellipseMerit, guess);
+est_loc = [est_loc 0.1]
 
 % angle1 = angle(X1);
 % angle2 = angle(X2);
@@ -116,7 +125,7 @@ end
 dist = sqrt(sum((a-b).^2));
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function answer = ellipseMerit(s)
+function answer = ellipseMerit(src)
 % Defines a function to be minimized so as to localize a source.
 % s -> sound source position. [x y z]
 % m -> microphone positions. (known: in the reverse problem)
@@ -129,31 +138,31 @@ function answer = ellipseMerit(s)
 % expected delays. Then, sum the squares of the vector.
 % Because, we are aiming to minimize the sum of the squares in the over-
 % determined case of more microphones than 3 (b/c we live in 3D).
-global BUSHMicLoc;
-global BUSHDelays;
-vec = ellipseFun(s, BUSHMicLoc, BUSHDelays);
+global rcv_loc;
+global timelag;
+vec = ellipseFun(src(1:2), rcv_loc(:,(1:2)), timelag);
 % In the future, divide each element by the PRECISION of the delay
 % estimation. This could be the full width at half maximum of our
 % cross correlation coeeficients graph.
 answer = sum(vec.^2);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function res = ellipseFun(s, m, delays)
-% s -> sound source position. [x y z]
-% m -> microphone positions. (known)
+function res = ellipseFun(src, rcv, timelags)
+% src -> sound source position. [x y z]
+% rcv -> receiver positions. (known)
 % [x1 y1 z1;
 % x2 y2 z2;
 % x3 y3 z3;
 % x4 y4 z4]
 % Delays -> d12, d13, d14, ... d23, d24,... d34...
-nMic = size(m, 1);
+nMic = size(rcv, 1);
 % This is a clever way of calculating the # of Pairs of microphones.
-nPairs = (nMic.^2 - nMic)./2;
+nPairs = (nMic^2 - nMic) / 2;
 % So, we will have as many equations as pairs of microphones.
 res = zeros(nPairs,1);
 % speed of sound
 % Distance:- meters Time:- seconds
-c = 343;
+global c;
 % Equations
 % We expect the delay reported by cross correlation to equal
 % the difference between the distances of the source to each microphone
@@ -161,9 +170,9 @@ c = 343;
 % Distances b/n microphones and the source.
 Dis = zeros(nPairs,1);
 h = 1;
-for k = 1:nMic
-    for j = k+1:nMic
-        diffD = distance(s, m(k,:)) - distance(s, m(j,:));
+for i = 1:nMic
+    for j = i+1:nMic
+        diffD = distance(src, rcv(i,:)) - distance(src, rcv(j,:));
         Dis(h) = diffD;
         h = h+1;
         % if h>nPairs+1
@@ -172,6 +181,6 @@ for k = 1:nMic
     end
 end
 % The final equation
-for k=1:nPairs
-    res(k)= Dis(k)./c - delays(k);
+for n=1:nPairs
+    res(n)= Dis(n)/c - timelags(n);
 end
