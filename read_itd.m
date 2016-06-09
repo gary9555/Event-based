@@ -24,6 +24,31 @@
 % end
 % fprintf('\n');
 
+%%
+% if the noise calibration parameter doesnt exist, do a silent room
+% calibration
+if exist('noise_calib','var') == 0
+    rec = dsp.AudioRecorder('OutputNumOverrunSamples',true,'SampleRate',44100,'NumChannels',2);
+    disp('Calibrating, please keep silent');
+    audio = [];    
+    % start the loop 
+    tic;
+    while toc < 5  
+      [audioIn,nOverrun] = step(rec);
+      audio = [audio ;audioIn];
+
+          if nOverrun > 0
+            fprintf('Audio recorder queue was overrun by %d samples\n'...
+                ,nOverrun);
+          end
+    end
+    noise_calib = max(max(audio));
+    release(rec);
+    disp('Calibration complete'); 
+    pause(0.3);
+end
+
+%%
 % plot the angle estimation of the sound source
 figure(3);
 angle = linspace(0,pi,200);
@@ -49,7 +74,7 @@ while toc < 10
   [audioIn,nOverrun] = step(rec);
   audio = [audio ;audioIn];
   %step(AFW,audioIn);
-  angle(end+1)= itd(audioIn);
+  angle(end+1)= itd(audioIn, noise_calib);
   % plot the angle position on the unit circle every 0.1 seconds
   if toc-prev_t > 0.1
       delete(angleHandle);

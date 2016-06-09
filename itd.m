@@ -1,10 +1,10 @@
-function angle = itd(data)
+function angle = itd(data, noise_calib)
 
 c = 343;          % sound speed
 mic_dist = 0.1;   % distance between the two mics
 fs = 44100;
 
-if max(max(data)) < 0.2
+if max(max(data)) < noise_calib
     angle = 0;
     return 
 end
