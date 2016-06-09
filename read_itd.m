@@ -24,23 +24,25 @@
 % end
 % fprintf('\n');
 
-AR = dsp.AudioRecorder('OutputNumOverrunSamples',true,'SampleRate',44100,'NumChannels',2);
+rec = dsp.AudioRecorder('OutputNumOverrunSamples',true,'SampleRate',44100,'NumChannels',2);
 %AFW = dsp.AudioFileWriter('myspeech.wav','FileFormat', 'WAV');
 disp('Speak into microphone now');
 angle = [];
 tic;
+audio = [];
 while toc < 10
   
-  [audioIn,nOverrun] = step(AR);
+  [audioIn,nOverrun] = step(rec);
+  audio = [audio ;audioIn];
   %step(AFW,audioIn);
   %angle = step(@itd, audioIn);
-  angle= itd(audioIn);
-  disp(angle);
+  angle(end+1)= itd(audioIn);
+  %disp(angle);
   if nOverrun > 0
     fprintf('Audio recorder queue was overrun by %d samples\n'...
         ,nOverrun);
   end
 end
-release(AR);
-release(AFW);
+release(rec);
+%release(AFW);
 disp('Recording complete'); 
