@@ -24,19 +24,47 @@
 % end
 % fprintf('\n');
 
+% plot the angle estimation of the sound source
+figure(3);
+angle = linspace(0,pi,200);
+plot(cos(angle), sin(angle), 'k-');
+axis([-1.5 1.5 0 1.5]);
+xlabel('X axis');
+ylabel('Y axis');
+hold on;
+
+% initialize
 rec = dsp.AudioRecorder('OutputNumOverrunSamples',true,'SampleRate',44100,'NumChannels',2);
 %AFW = dsp.AudioFileWriter('myspeech.wav','FileFormat', 'WAV');
 disp('Speak into microphone now');
 angle = [];
-tic;
 audio = [];
-while toc < 10
-  
+prev_angle = 0;
+angleHandle = plot(sin(0), cos(0),'ro', 'MarkerSize', 15);  
+
+% start the loop 
+tic;
+prev_t = toc;
+while toc < 10  
   [audioIn,nOverrun] = step(rec);
   audio = [audio ;audioIn];
   %step(AFW,audioIn);
-  %angle = step(@itd, audioIn);
   angle(end+1)= itd(audioIn);
+  % plot the angle position on the unit circle every 0.1 seconds
+  if toc-prev_t > 0.1
+      delete(angleHandle);
+      angleHandle = plot(sin(angle(end)), cos(angle(end)),'ro', 'MarkerSize', 15);  
+      drawnow
+      prev_t = toc;
+  end
+
+  
+%   % avoid noise causing angle jumps
+%   if abs(prev_angle-angle(end)) > 10
+%       angle(end) = prev_angle;
+%   end
+%   prev_angle = angle(end);
+  
   %disp(angle);
   if nOverrun > 0
     fprintf('Audio recorder queue was overrun by %d samples\n'...
@@ -46,3 +74,4 @@ end
 release(rec);
 %release(AFW);
 disp('Recording complete'); 
+hold off;
