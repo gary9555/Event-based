@@ -2,7 +2,7 @@ s = serial('COM4');	           % creating object for s COM port
 set(s, 'BaudRate',4000000, 'FlowControl','hardware');     % configuring the buad to 4000000, rest are set to default
 set(s, 'DataBits',8);
 set(s, 'OutputBufferSize',2048);
-set(s,'InputBufferSize', 4096);
+%set(s,'InputBufferSize', 4096);
 %set(s, 'Timeout', 10);
 set(s, 'Terminator', 'CR/LF');
 
