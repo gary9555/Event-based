@@ -1,3 +1,4 @@
+function pushbot()
 s = serial('COM5');	           % creating object for s COM port
 set(s, 'BaudRate',4000000, 'FlowControl','hardware');     % configuring the buad to 4000000, rest are set to default
 set(s, 'DataBits',8);
@@ -11,9 +12,68 @@ fprintf(s, '!m+');
 pause(0.1);
 fprintf(s,'!m0=%0');  % left wheel
 fprintf(s,'!m1=%0');  % right wheel
+
+key='';
 % main loop
-f = figure(1); drawnow
-set(f, 'KeyPressFcn', @(x,y) disp(get(f,'CurrentCharacter')));
+f=figure(1); 
+set(f,'KeyPressFcn','key=get(f,''CurrentCharacter'')');
+
+while(1)
+    %a=get(f,'CurrentKey');
+    
+    switch(key)
+        case 'w'
+            disp('hello');
+            fprintf(s,'!m0=%20');
+            fprintf(s,'!m1=%20');
+            key='';            
+            break;
+%        while get(f,'CurrentCharacter')=='w'
+%        end
+%        fprintf(s,'!m0=%0');
+%        fprintf(s,'!m1=%0');
+        
+        case 'a'
+            fprintf(s,'!m0=%10');
+            fprintf(s,'!m1=%20');
+            key='';
+            break;
+%        while get(f,'CurrentCharacter') == 'a'
+%        end
+%        fprintf(s,'!m0=%0');
+%        fprintf(s,'!m1=%0');
+    
+        case 'd'
+            fprintf(s,'!m0=%20');
+            fprintf(s,'!m1=%10');
+            key='';
+            break;
+%        while get(f,'CurrentCharacter') == 'd'
+%        end
+%        fprintf(s,'!m0=%0');
+%        fprintf(s,'!m1=%0');
+    
+        case 's'
+            fprintf(s,'!m0=%-20');
+            fprintf(s,'!m1=%-20');
+            key='';
+            break;
+    
+        case 't'
+            fprintf(s,'!m0=%0');
+            fprintf(s,'!m1=%0');
+            key='';
+            break;    
+    end
+    %disp(key);
+    pause(0.2);
+end
+fclose(s);
+
+
+
+
+%set(f, 'KeyPressFcn', @(x,y) disp(get(f,'CurrentCharacter')));
 
 % function MainGame()
 % 
@@ -64,42 +124,3 @@ set(f, 'KeyPressFcn', @(x,y) disp(get(f,'CurrentCharacter')));
 %     end
 % 
 % end
-    
-tic; 
-while(1)
-    a=get(f,'CurrentCharacter');
-    if a == 'w'
-       fprintf(s,'!m0=%20');
-       fprintf(s,'!m1=%20');
-%        while get(f,'CurrentCharacter')=='w'
-%        end
-%        fprintf(s,'!m0=%0');
-%        fprintf(s,'!m1=%0');
-    end
-    if a == 'a'
-       fprintf(s,'!m0=%10');
-       fprintf(s,'!m1=%20');
-%        while get(f,'CurrentCharacter') == 'a'
-%        end
-%        fprintf(s,'!m0=%0');
-%        fprintf(s,'!m1=%0');
-    end
-    if a == 'd'
-       fprintf(s,'!m0=%20');
-       fprintf(s,'!m1=%10');
-%        while get(f,'CurrentCharacter') == 'd'
-%        end
-%        fprintf(s,'!m0=%0');
-%        fprintf(s,'!m1=%0');
-    end
-    if a == 's'
-       fprintf(s,'!m0=%0');
-       fprintf(s,'!m1=%0');
-    end
-    if a == 't'
-        break;
-    end
-end
-fclose(s);
-
-
