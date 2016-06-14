@@ -15,64 +15,47 @@ fprintf(s,'!m1=%0');  % right wheel
 
 key='';
 % main loop
-f=figure(1); 
-set(f,'KeyPressFcn','key=get(f,''CurrentCharacter'')');
+pushbot = figure('KeyPressFcn',@myKeyDown,'KeyReleaseFcn',@myKeyUp);
+
 
 while(1)
-    %a=get(f,'CurrentKey');
-    
     switch(key)
         case 'w'
-            disp('hello');
             fprintf(s,'!m0=%20');
             fprintf(s,'!m1=%20');
-            key='';            
-            break;
-%        while get(f,'CurrentCharacter')=='w'
-%        end
-%        fprintf(s,'!m0=%0');
-%        fprintf(s,'!m1=%0');
-        
+            key='';                  
         case 'a'
             fprintf(s,'!m0=%10');
             fprintf(s,'!m1=%20');
             key='';
-            break;
-%        while get(f,'CurrentCharacter') == 'a'
-%        end
-%        fprintf(s,'!m0=%0');
-%        fprintf(s,'!m1=%0');
-    
         case 'd'
             fprintf(s,'!m0=%20');
             fprintf(s,'!m1=%10');
             key='';
-            break;
-%        while get(f,'CurrentCharacter') == 'd'
-%        end
-%        fprintf(s,'!m0=%0');
-%        fprintf(s,'!m1=%0');
-    
-        case 's'
+        case 's'           
             fprintf(s,'!m0=%-20');
             fprintf(s,'!m1=%-20');
             key='';
-            break;
-    
         case 't'
             fprintf(s,'!m0=%0');
             fprintf(s,'!m1=%0');
             key='';
-            break;    
+            break;
     end
-    %disp(key);
-    pause(0.2);
+    pause(0.1);
 end
 fclose(s);
+    
+    % nested callback function
+    function myKeyDown(hObject,event,handles)
+        key = get(hObject,'CurrentKey');
+    end
+    function myKeyUp(hObject,event,handles)
+        key = get(hObject,'CurrentKey');
+    end
 
 
-
-
+end
 %set(f, 'KeyPressFcn', @(x,y) disp(get(f,'CurrentCharacter')));
 
 % function MainGame()
