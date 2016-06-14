@@ -1,3 +1,9 @@
+%%%%%%%%%%%%%% To control the pushbot by keyboard %%%%%%%%%%%%%%%%%
+% Up:    w
+% Down:  s
+% Left:  a
+% Right  d
+% Terminate: t
 function pushbot()
 
 s = serial('COM5');	           % creating object for s COM port
