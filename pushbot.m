@@ -1,4 +1,5 @@
 function pushbot()
+
 s = serial('COM5');	           % creating object for s COM port
 set(s, 'BaudRate',4000000, 'FlowControl','hardware');     % configuring the buad to 4000000, rest are set to default
 set(s, 'DataBits',8);
@@ -14,49 +15,54 @@ fprintf(s,'!m0=%0');  % left wheel
 fprintf(s,'!m1=%0');  % right wheel
 
 key='';
+press_flag = 0;  % 0 not press_flag, 1 for first press, 2 already press_flag for a while
+
 % main loop
 pushbot = figure('KeyPressFcn',@myKeyDown,'KeyReleaseFcn',@myKeyUp);
-
-
 while(1)
-    switch(key)
-        case 'w'
-            fprintf(s,'!m0=%20');
-            fprintf(s,'!m1=%20');
-            key='';                  
-        case 'a'
-            fprintf(s,'!m0=%10');
-            fprintf(s,'!m1=%20');
-            key='';
-        case 'd'
-            fprintf(s,'!m0=%20');
-            fprintf(s,'!m1=%10');
-            key='';
-        case 's'           
-            fprintf(s,'!m0=%-20');
-            fprintf(s,'!m1=%-20');
-            key='';
-        case 't'
-            fprintf(s,'!m0=%0');
-            fprintf(s,'!m1=%0');
-            key='';
-            break;
+    if press_flag ==1
+        switch(key)
+            case 'w'
+                fprintf(s,'!m0=%20');
+                fprintf(s,'!m1=%20');
+
+            case 'a'
+                fprintf(s,'!m0=%10');
+                fprintf(s,'!m1=%30');
+
+            case 'd'
+                fprintf(s,'!m0=%30');
+                fprintf(s,'!m1=%10');
+
+            case 's'           
+                fprintf(s,'!m0=%-20');
+                fprintf(s,'!m1=%-20');
+
+            case 't'           
+                break;
+        end
+        press_flag=2;
     end
     pause(0.1);
 end
-fclose(s);
+fprintf(s,'!m0=%0');
+fprintf(s,'!m1=%0');
+
     
     % nested callback function
     function myKeyDown(hObject,event,handles)
         key = get(hObject,'CurrentKey');
+        press_flag = 1;
     end
     function myKeyUp(hObject,event,handles)
-        key = get(hObject,'CurrentKey');
+        fprintf(s,'!m0=%0');
+        fprintf(s,'!m1=%0');
+        key = '';
+        press_flag = 0;
     end
-
+fclose(s);
 
 end
-%set(f, 'KeyPressFcn', @(x,y) disp(get(f,'CurrentCharacter')));
 
 % function MainGame()
 % 
@@ -73,13 +79,13 @@ end
 %     ...
 % % Main game loop
 % while GameNotOver
-%     if KeyStatus(KEY.UP)  % If left key is pressed
+%     if KeyStatus(KEY.UP)  % If left key is press_flag
 %         player.y = player.y - ystep;
 %     end
-%     if KeyStatus(KEY.LEFT)  % If left key is pressed
+%     if KeyStatus(KEY.LEFT)  % If left key is press_flag
 %         player.x = player.x - xstep;
 %     end
-%     if KeyStatus(KEY.RIGHT)  % If left key is pressed
+%     if KeyStatus(KEY.RIGHT)  % If left key is press_flag
 %         %..
 %     end
 %     %...
@@ -89,7 +95,7 @@ end
 %     function MyKeyDown(hObject, event, handles)
 %         key = get(hObject,'CurrentKey');
 %         % e.g., If 'd' and 'j' are already held down, and key == 's'is
-%         % pressed now
+%         % press_flag now
 %         % then KeyStatus == [0, 0, 0, 1, 1, 0] initially
 %         % strcmp(key, KeyNames) -> [0, 0, 1, 0, 0, 0, 0]
 %         % strcmp(key, KeyNames) | KeyStatus -> [0, 0, 1, 1, 1, 0]
