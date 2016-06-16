@@ -1,30 +1,8 @@
-% 
-% record_time = 20;
-% % start recording
-% rec = audiorecorder(44100,16,2);
-% record(rec, record_time);
-% %fprintf('       ');
-% angle = 0;
-% prev = 1;
-% i=0;
-% while strcmp(rec.Running, 'on')
-%     % while recording, shoot the online data to the buffer
-%     pause(0.1);
-% %     pause(rec);
-%     % use itd to deal with the buffer
-%     data = getaudiodata(rec);
-%     data = data(prev:end,:);
-%     [prev,~] = size(data);
-%     angle = itd(data);
-%     resume(rec);
-%     % display online results
-%     %fprintf('\b\b\b\b\b\b\b%-7s',num2str(angle));
-%     disp(angle);
-%     %i=i+1;
-% end
-% fprintf('\n');
-
 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%% Ambient Noise Calibration %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % if the noise calibration parameter doesnt exist, do a silent room
 % calibration
 if exist('noise_calib','var') == 0
@@ -49,6 +27,10 @@ if exist('noise_calib','var') == 0
 end
 
 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%% Main Loop %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % plot the angle estimation of the sound source
 figure(3);
 angle = linspace(0,pi,200);
@@ -92,11 +74,37 @@ while toc < 10
   
   %disp(angle);
   if nOverrun > 0
-    fprintf('Audio recorder queue was overrun by %d samples\n'...
-        ,nOverrun);
+    fprintf('Audio recorder queue was overrun by %d samples\n', nOverrun);
   end
 end
 release(rec);
 %release(AFW);
 disp('Recording complete'); 
 hold off;
+
+%% 
+% record_time = 20;
+% % start recording
+% rec = audiorecorder(44100,16,2);
+% record(rec, record_time);
+% %fprintf('       ');
+% angle = 0;
+% prev = 1;
+% i=0;
+% while strcmp(rec.Running, 'on')
+%     % while recording, shoot the online data to the buffer
+%     pause(0.1);
+% %     pause(rec);
+%     % use itd to deal with the buffer
+%     data = getaudiodata(rec);
+%     data = data(prev:end,:);
+%     [prev,~] = size(data);
+%     angle = itd(data);
+%     resume(rec);
+%     % display online results
+%     %fprintf('\b\b\b\b\b\b\b%-7s',num2str(angle));
+%     disp(angle);
+%     %i=i+1;
+% end
+% fprintf('\n');
+

@@ -1,4 +1,4 @@
-s = serial('COM5');	           % creating object for s COM port
+s = serial('/dev/ttyUSB0');	           % creating object for s COM port
 set(s, 'BaudRate',4000000, 'FlowControl','hardware');     % configuring the buad to 4000000, rest are set to default
 set(s, 'DataBits',8);
 set(s, 'OutputBufferSize',2048);

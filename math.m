@@ -9,6 +9,7 @@ for id = 0.0078:0.0078:0.1
    legend('Actual locus','Approximated locus','Location','NorthEast');
    
 end
+axis([0 2.5 0 2.5]);
 
 figure(2);
 id = 0.0078:0.0078:0.1;
