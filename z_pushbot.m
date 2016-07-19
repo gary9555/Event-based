@@ -4,7 +4,7 @@
 % Left:  a
 % Right  d
 % Terminate: t
-function pushbot()
+function z_pushbot()
 
 s = serial('COM5');	           % creating object for s COM port
 set(s, 'BaudRate',12000000, 'FlowControl','hardware');     % configuring the buad to 4000000, rest are set to default
