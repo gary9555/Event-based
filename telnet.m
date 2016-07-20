@@ -1,11 +1,15 @@
-tcp = tcpip('172.19.12.212',56000);   % remote host and its port value
-set(tcp, 'OutputBufferSize',2048);
-set(tcp,'InputBufferSize', 4096);
+tcp = tcpip('172.19.12.155',56000);   % remote host and its port value 172.19.12.212    172.19.12.190
+                                      % port 56001 for wlan module config,
+                                      % port 56000 for pushbot interface
+set(tcp, 'OutputBufferSize',16384);
+set(tcp,'InputBufferSize', 16384);
 
 fopen(tcp);
-fprintf(tcp, '!m+');
-fprintf(tcp,'!m0=%0');
-fprintf(tcp,'!m1=%0');
+pause(0.1);
+% 
+ fprintf(tcp, '!m+');
+ fprintf(tcp,'!m0=%0');
+ fprintf(tcp,'!m1=%0');
 
 
 while(1)
@@ -40,9 +44,9 @@ while(1)
     end    
     fprintf(tcp,cmd);    % write data to the port    
     
-%     pause(0.1);
+     pause(0.05);
 %     out = fscanf(s);  % read from the port
-    pause(0.1);
+    
     if tcp.BytesAvailable ~= 0
         out = fread(tcp,tcp.BytesAvailable,'char');
         a = (char(out)).';

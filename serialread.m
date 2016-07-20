@@ -1,5 +1,5 @@
 s = serial('/dev/ttyUSB0');	           % creating object for s COM port
-set(s, 'BaudRate',4000000, 'FlowControl','hardware');     % configuring the buad to 4000000, rest are set to default
+set(s, 'BaudRate',4000000);%,12000000, 'FlowControl','hardware');     % configuring the buad to 4000000, rest are set to default
 set(s, 'DataBits',8);
 set(s, 'OutputBufferSize',2048);
 set(s,'InputBufferSize', 4096);
@@ -11,6 +11,7 @@ fprintf(s, '!m+');
 fprintf(s,'!m0=%0');
 fprintf(s,'!m1=%0');
 % main loop
+pause(0.2);
 while(1)
     cmd = input('Input Cmd: ','s');
     if strcmp(cmd, 'stop')
