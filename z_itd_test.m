@@ -4,7 +4,7 @@ clear
 
 c = 343; % sound speed
 
-roomDim = [5 5 3];
+roomDim = [5 5 5];
 rcv_loc1 = [2.45  .1 .1];
 rcv_loc2 = [2.55 .1 .1];
 rcv_loc  = [rcv_loc1;rcv_loc2];

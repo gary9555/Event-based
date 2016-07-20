@@ -4,10 +4,10 @@
 % Left:  a
 % Right  d
 % Terminate: t
-function pushbot()
+function z_pushbot()
 
-s = serial('/dev/ttyUSB0');	           % creating object for s COM port
-set(s, 'BaudRate',4000000, 'FlowControl','hardware');     % configuring the buad to 4000000, rest are set to default
+s = serial('COM5');	           % creating object for s COM port
+set(s, 'BaudRate',12000000, 'FlowControl','hardware');     % configuring the buad to 4000000, rest are set to default
 set(s, 'DataBits',8);
 set(s, 'OutputBufferSize',2048);
 set(s,'InputBufferSize', 4096);
@@ -43,6 +43,14 @@ while(1)
             case 's'           
                 fprintf(s,'!m0=%-20');
                 fprintf(s,'!m1=%-20');
+                
+            case 'z'           
+                fprintf(s,'!m0=%-20');
+                fprintf(s,'!m1=%+20');
+           
+            case 'x'           
+                fprintf(s,'!m0=%+20');
+                fprintf(s,'!m1=%-20');
 
             case 't'           
                 break;
@@ -61,15 +69,17 @@ fprintf(s,'!m1=%0');
         press_flag = 1;
     end
     function myKeyUp(hObject,event,handles)
-        if key~= 't'
+        if key~='t'
             fprintf(s,'!m0=%0');
             fprintf(s,'!m1=%0');
         end
         key = '';
         press_flag = 0;
     end
+
 fclose(s);
 close(pb);
+
 end
 
 % function MainGame()

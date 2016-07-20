@@ -56,7 +56,7 @@ while toc < 10
   [audioIn,nOverrun] = step(rec);
   audio = [audio ;audioIn];
   %step(AFW,audioIn);
-  angle(end+1)= itd(audioIn, noise_calib);
+  angle(end+1)= z_itd(audioIn, noise_calib);
   % plot the angle position on the unit circle every 0.1 seconds
   if toc-prev_t > 0.1
       delete(angleHandle);
